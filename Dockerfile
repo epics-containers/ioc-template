@@ -17,11 +17,11 @@ RUN apt-get update && apt-get upgrade -y && \
 USER ${USERNAME}
 
 # get additional support modules
-## TODO replace examples with support module version numbers ##
+## TODO replace examples with support module(s) version number(s) ##
 # ARG ADARAVIS_VERSION=R2-2-1
 # ARG ADGENICAM_VERSION=R1-8
 
-## TODO replace examples with support module source locations ##
+## TODO replace examples with support module(s) source locations ##
 # RUN python3 module.py add areaDetector ADGenICam ADGENICAM ${ADGENICAM_VERSION}
 # RUN python3 module.py add areaDetector ADAravis ADARAVIS ${ADARAVIS_VERSION}
 
@@ -37,8 +37,10 @@ COPY --chown=${USER_UID}:${USER_GID} Makefile ${EPICS_ROOT}/ioc/iocApp/src
 
 # update dependencies and build the support modules and the ioc
 RUN python3 module.py dependencies
-RUN make -j -C  ${SUPPORT}/ADGenICam-${ADGENICAM_VERSION} && \
-    make -j -C  ${SUPPORT}/ADAravis-${ADARAVIS_VERSION} && \
+## TODO replace examples with support module(s)
+RUN \
+    # make -j -C  ${SUPPORT}/ADGenICam-${ADGENICAM_VERSION} && \
+    # make -j -C  ${SUPPORT}/ADAravis-${ADARAVIS_VERSION} && \
     make -j -C  ${EPICS_ROOT}/ioc && \
     make -j clean
 
