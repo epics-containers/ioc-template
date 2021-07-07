@@ -7,7 +7,6 @@ ioc_DBD += base.dbd
 ioc_DBD += devIocStats.dbd
 ioc_DBD += asyn.dbd
 ioc_DBD += busySupport.dbd
-ioc_DBD += ADSupport.dbd
 ## TODO add required dbds
 
 ioc_SRCS += ioc_registerRecordDeviceDriver.cpp
