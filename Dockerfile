@@ -6,11 +6,6 @@
 ##    you are adding in this build                                        ##
 ############################################################################
 
-## TODO change this to the registry that the base image resides in
-ARG REGISTRY=ghcr.io/epics-containers
-## TODO replace below with base image version you want to use
-ARG ADCORE_VERSION=3.10r3.0
-
 ## TODO replace these examples with the new support module(s) version number(s) ##
 ARG ADARAVIS_VERSION=R2-2-1
 ARG ADGENICAM_VERSION=R1-8
@@ -18,7 +13,7 @@ ARG ADGENICAM_VERSION=R1-8
 ##### runtime stage ############################################################
 
 ## TODO replace below with base image tag you want to use
-FROM ${REGISTRY}/epics-areadetector:${ADCORE_VERSION} AS developer
+FROM ghcr.io/epics-containers/epics-areadetector:3.10r3.0 AS developer
 
 ## TODO declare global args for reuse in this build stage
 ARG ADARAVIS_VERSION
@@ -66,7 +61,7 @@ RUN \
 
 ##### runtime stage ############################################################
 
-FROM ${REGISTRY}/epics-areadetector:${ADCORE_VERSION}.run AS runtime
+FROM ghcr.io/epics-containers/epics-areadetector:3.10r3.0.run AS runtime
 
 ## TODO declare global args for reuse in this build stage
 ARG ADARAVIS_VERSION
