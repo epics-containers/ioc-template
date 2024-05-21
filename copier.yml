@@ -6,7 +6,7 @@ _message_before_copy: |
 
   You will only need to update the Dockerfile to create a new Generic IOC.
   You may also need to add any new support modules to the ibek-support
-  submodule which contains recipies for building support modules in the
+  submodule which contains recipes for building support modules in the
   container environment.
 
 _subdirectory: "template"
@@ -14,9 +14,12 @@ _subdirectory: "template"
 _preserve_symlinks: true
 
 _tasks:
-  - git init --initial-branch=main
+  - git init
   # Add the remote if it doesn't exist
-  - if ! git remote | grep origin; then  git remote add origin {{repo_uri}}; git submodule add https://github.com/epics-containers/ibek-support.git; fi
+  - if not exist .git\config (
+      git remote add origin {{repo_uri}} 
+      git submodule add https://github.com/epics-containers/ibek-support.git
+    )
 
 name:
   type: str
@@ -26,7 +29,7 @@ name:
     ioc-adsimdetector
   validator: >-
     {% if not ( name | regex_search('^ioc-[a-z][a-z-0-9]+$')) %}
-    {{name}} must be alphanumeric and start with ioc- follwed by a letter,
+    {{name}} must be alphanumeric and start with ioc- followed by a letter,
     it may contain hyphens
     {% endif %}
 
@@ -44,13 +47,13 @@ git_platform:
 
 github_org:
   type: str
-  help: The GitHub organisation that will contain this repo.
+  help: The GitHub organization that will contain this repo.
   placeholder: e.g. your own GitHub account or epics-containers
   when: >-
     {{ git_platform == 'github.com' }}
   validator: >-
     {% if not (github_org | regex_search('^[a-zA-Z][a-zA-Z-0-9]+$')) %}
-    {{github_org}} must be lower case AlphaNumeric and start with a letter,
+    {{github_org}} must be lowercase alphanumeric and start with a letter,
     it may contain hyphens
     {% endif -%}
 
@@ -59,9 +62,9 @@ repo_uri:
   help: Remote URI of the repository.
   default: >-
     {% if git_platform == 'gitlab.diamond.ac.uk' -%}
-    git@{{git_platform}}:controls/containers/iocs/{{name}}.git
+    https://{{git_platform}}/controls/containers/iocs/{{name}}.git
     {%- else -%}
-    git@{{git_platform}}:{{github_org}}/{{name}}.git
+    https://{{git_platform}}/{{github_org}}/{{name}}.git
     {%- endif %}
 
 rtems:
