@@ -120,7 +120,7 @@ if [ -f ${override} ]; then
 # 2. ioc.yaml ******************************************************************
 elif [ -f ${ibek_src} ]; then
 
-    if [[ ${#ibek_yams[@]} > 1 ]]; then
+    if [[ ${#ibek_yamls[@]} > 1 ]]; then
         ibek_error "ERROR: Multiple YAML files found in ${CONFIG_DIR}."
     fi
 
