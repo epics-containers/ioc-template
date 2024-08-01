@@ -13,6 +13,11 @@ _subdirectory: "template"
 
 _preserve_symlinks: true
 
+_tasks:
+  - git init --initial-branch=main
+  # Add the remote if it doesn't exist
+  - if ! git remote | grep origin; then  git remote add origin {{repo_uri}}; git submodule add https://github.com/epics-containers/ibek-support.git; fi
+
 name:
   type: str
   help: |
