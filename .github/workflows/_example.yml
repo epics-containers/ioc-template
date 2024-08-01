@@ -24,7 +24,7 @@ jobs:
 
       - name: remove submodule
         run: |
-          rm example/ibek-support
+          rm -fr example/ibek-support
 
       - name: Publish example
         # We pin to the SHA, not the tag, for security reasons.
