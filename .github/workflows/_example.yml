@@ -22,6 +22,10 @@ jobs:
         run: |
           sed -i 's|_src_path: .|_src_path: gh:epics-containers/ioc-template|' example/.copier-answers.yml
 
+      - name: remove submodule
+        run: |
+          rm example/ibek-support
+
       - name: Publish example
         # We pin to the SHA, not the tag, for security reasons.
         # https://docs.github.com/en/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
