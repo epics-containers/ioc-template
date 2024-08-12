@@ -35,8 +35,8 @@ else
 fi
 
 # make sure we have a network to share beteen the devcontainer and gateway container
-if ! docker network exists channel_access ; then
-    docker network create --subnet="170.20.0.0/16" channel_access
+if ! docker network inspect channel_access_devcontainer &>/dev/null ; then
+    docker network create --subnet="170.21.0.0/16" channel_access_devcontainer
 fi
 
 # ensure local container users can access X11 server
