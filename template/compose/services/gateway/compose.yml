@@ -22,13 +22,13 @@ services:
     restart: unless-stopped
 
     networks:
-      channel_access:
+      channel_access_devcontainer:
 
     configs:
       - source: ca-gateway_config
         target: /config
 
-    command: -cip 170.20.255.255 -pvlist /config/pvlist -access /config/access -log /dev/stdout -debug 1
+    command: -cip 170.21.255.255 -pvlist /config/pvlist -access /config/access -log /dev/stdout -debug 1
 
     profiles:
       - test
@@ -50,5 +50,5 @@ configs:
     file: ./config
 
 networks:
-  channel_access:
+  channel_access_devcontainer:
     external: true

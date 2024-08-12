@@ -48,7 +48,7 @@
     "runArgs": [
         // IMPORTANT: this network must exist before the container is created
         // source compose/environment.sh to create it before first use
-        "--network=channel_access",
+        "--network=channel_access_devcontainer",
         // Make sure SELinux does not disable write access to host filesystems like tmp
         "--security-opt=label=disable"
     ],
