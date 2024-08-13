@@ -14,7 +14,9 @@
     },
     "remoteEnv": {
         // provides a name for epics-containers to use in bash prompt etc.
-        "EC_PROJECT": "${localWorkspaceFolderBasename}"
+        "EC_PROJECT": "${localWorkspaceFolderBasename}",
+        "EPICS_CA_AUTO_ADDR_LIST": "NO",
+        "EPICS_CA_ADDR_LIST": "127.0.0.1"
     },
     "features": {
         // add quality of life features for developers including git config integration
