@@ -63,6 +63,6 @@
         // in this way the devcontainer and runtime look very similar
         "source=${localWorkspaceFolder},target=/epics/generic-source,type=bind",
         // Mount the opi folder so we can use phoebus from outside the container
-        "source=${localWorkspaceFolder}/opi/ioc,target=/epics/opi,type=bind"
+        "source=${localWorkspaceFolder}/opi/auto-generated,target=/epics/opi,type=bind"
     ]
 }

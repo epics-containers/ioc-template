@@ -9,7 +9,7 @@ services:
       DISPLAY: $DISPLAY
     tty: true
     # pick a server port for phoebus so it does not reconnect to existing phoebus
-    command: phoebus-product/phoebus.sh -settings /config/settings.ini -resource /opi/ioc/index.bob -server 7010
+    command: phoebus-product/phoebus.sh -settings /config/settings.ini -resource /opi/auto-generated/index.bob -server 7010
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ~/.Xauthority:/root/.Xauthority
