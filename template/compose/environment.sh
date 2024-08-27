@@ -22,9 +22,10 @@ fi
 function check_docker {
     # return 0 if docker is detected, or 1 otherwise,
     # cope with the possibility that podman is aliased to docker
-    if [[ $(docker version) =~ "Podman"  ]]&> /dev/null; then
-        return 1
+    if [[ $(docker version) =~ "Docker" ]]&> /dev/null; then
+        return 0
     fi
+    return 1
 }
 
 if check_docker; then
