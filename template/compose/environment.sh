@@ -52,4 +52,4 @@ export COMPOSE_PROFILES=test
 # for test profile our ca-gateway publishes PVS on the loopback interface
 export EPICS_CA_ADDR_LIST=127.0.0.1
 # make a short alias for docker-compose for convenience
-alias ec='docker compose'
+alias dc='docker compose'
