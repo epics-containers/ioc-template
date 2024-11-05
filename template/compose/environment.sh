@@ -30,14 +30,16 @@ function check_docker {
 
 if check_docker; then
     USER_ID=$(id -u); USER_GID=$(id -g)
+    docker="docker"
 else
     USER_ID=0; USER_GID=0
     alias docker=podman
+    docker="podman"
 fi
 
 # make sure we have a network to share beteen the devcontainer and gateway container
-if ! docker network inspect channel_access_devcontainer &>/dev/null ; then
-    docker network create --subnet="170.21.0.0/16" channel_access_devcontainer
+if ! $docker network inspect channel_access_devcontainer &>/dev/null ; then
+    $docker network create --subnet="170.21.0.0/16" channel_access_devcontainer
 fi
 
 # ensure local container users can access X11 server
@@ -52,4 +54,4 @@ export COMPOSE_PROFILES=test
 # for test profile our ca-gateway publishes PVS on the loopback interface
 export EPICS_CA_ADDR_LIST=127.0.0.1
 # make a short alias for docker-compose for convenience
-alias ec='docker compose'
+alias dc='docker compose'
