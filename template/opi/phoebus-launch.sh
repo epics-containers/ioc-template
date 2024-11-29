@@ -23,9 +23,10 @@ elif module load phoebus 2>/dev/null; then
 else
     echo "No local phoebus install found, using a container"
 
-    if podman version &> /dev/null && [[ -z $USE_DOCKER ]] ;
-        then docker=podman
-        else docker=docker
+    # prefer docker but use podman if USE_PODMAN is set
+    if docker version &> /dev/null && [[ -z $USE_PODMAN ]]
+        then docker=docker
+        else docker=podman
     fi
     echo "Using $docker as container runtime"
 
