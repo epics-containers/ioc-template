@@ -69,7 +69,7 @@ jobs:
       - name: Test image
         # can't test non native without some hardware to run on
         if: ${{ matrix.epics-target == 'linux-x86_64' }}
-        run: tests/run-tests.sh ci_test
+        run: tests/run-tests.sh
 
       - name: Push developer image
         if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
