@@ -23,7 +23,8 @@ export TAG=${TAG:-ec_test}
 if [[ ${TAG} == "ec_test" ]] ; then TARGET=runtime ./build; fi
 
 # try out a test ibek config IOC instance with the generic IOC
-result=$($docker run --rm -v ${THIS}/config:${CONF} ${TAG} /epics/ioc/start.sh 2>&1)
+opts="--rm --security-opt=label=disable -v ${THIS}/config:${CONF}"
+result=$($docker run ${opts} ${TAG} /epics/ioc/start.sh 2>&1)
 
 # check that the IOC output expected results
 if echo "${result}" | grep -i error; then
