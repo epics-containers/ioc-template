@@ -22,8 +22,8 @@ fi
 cd ${ROOT}
 
 # if a tag was passed in this implies it was already built
-export TAG=${TAG:-localhost/ec_test}
-if [[ ${TAG} == "localhost/ec_test" ]] ; then TARGET=runtime ./build; fi
+export TAG=${TAG:-ec_test}
+if [[ ${TAG} == "ec_test" ]] ; then TARGET=runtime ./build; fi
 
 # try out a test ibek config IOC instance with the generic IOC
 opts="--rm --security-opt=label=disable -v ${THIS}/config:${CONF}"
@@ -39,6 +39,4 @@ elif [[ ! ${result} =~ "5.15" || ! ${result} =~ "/epics/runtime/st.cmd" ]]; then
 fi
 
 echo "Tests passed!"
-
-
 
