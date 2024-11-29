@@ -13,8 +13,10 @@ CONF=/epics/ioc/config
 # log commands and stop on errorsr
 set -ex
 
-# use docker if available else use podman
-if docker version &>/dev/null; then docker=docker; else docker=podman; fi
+if podman version &> /dev/null && [[ -z $USE_DOCKER ]]
+    then docker=podman
+    else docker=docker
+fi
 
 cd ${ROOT}
 
