@@ -25,8 +25,8 @@ else
 
     # prefer docker but use podman if USE_PODMAN is set
     if docker version &> /dev/null && [[ -z $USE_PODMAN ]]
-        then docker=docker
-        else docker=podman
+        then docker=docker; UIDGID=$(id -u):$(id -g)
+        else docker=podman; UIDGID=0:0
     fi
     echo "Using $docker as container runtime"
 
@@ -35,8 +35,8 @@ else
 
     # settings for container launch
     x11="-e DISPLAY --net host"
-    args=$"--rm -it --security-opt=label=none"
-    mounts="-v=/tmp:/tmp -v=${workspace}:/workspace"
+    args="--rm -it --security-opt=label=none --user ${UIDGID}"
+    mounts="-v=/tmp:/tmp -v=${workspace}:/workspace -v=${workspace}/..:/workspaces"
     image="ghcr.io/epics-containers/ec-phoebus:latest"
 
     settings="

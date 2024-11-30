@@ -54,7 +54,10 @@
         // To access two devcontainers from the host for example:
         // EPICS_CA_ADDR_LIST="127.0.0.1:5064 127.0.0.1:6064"
         "127.0.0.1:5064:5064/udp",
-        "127.0.0.1:5064-5065:5064-5065"
+        "127.0.0.1:5064-5065:5064-5065",
+        // "127.0.0.1:5076:5076/udp", PVA UDP does not work into container network
+        // expose pva name server access via TCP
+        "5075-5076:5075-5076"
     ],
     // Mount the parent of the project folder so we can access peer projects
     "workspaceMount": "source=${localWorkspaceFolder}/..,target=/workspaces,type=bind",
