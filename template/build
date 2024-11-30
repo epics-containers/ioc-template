@@ -35,4 +35,6 @@ if [ ! -d ibek-support/_global ] ; then git submodule update --init ; fi
 # build runtime or developer image
 set -x
 $docker build -t ${TAG} "${@}" --build-arg IMAGE_EXT=$IMAGE_EXT \
-    --target $TARGET .
+    --build-arg BUILDKIT_INLINE_CACHE=1 \
+    --build-arg EPICS_TARGET_ARCH=$T_A \
+    --load --target $TARGET .
