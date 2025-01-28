@@ -22,9 +22,10 @@ jobs:
         run: |
           sed -i 's|_src_path: .|_src_path: gh:epics-containers/ioc-template|' example/.copier-answers.yml
 
-      - name: remove submodule
+      - name: refresh the submodule
         run: |
-          rm -fr example/ibek-support
+          cd example;
+          git submodule update --init
 
       - name: Publish example
         # We pin to the SHA, not the tag, for security reasons.
@@ -35,4 +36,4 @@ jobs:
           publish_dir: example
           external_repository: epics-containers/ioc-template-example
           publish_branch: main
-          exclude_assets: ''  # default would exclude .github
+          exclude_assets: "" # default would exclude .github
