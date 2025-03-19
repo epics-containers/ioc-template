@@ -20,19 +20,22 @@ RUN pip install --upgrade -r requirements.txt
 
 WORKDIR ${SOURCE_FOLDER}/ibek-support
 
-# copy the global ibek files
-COPY ibek-support/_global/ _global
+COPY ibek-support/_ansible _ansible
+ENV PATH=$PATH:${SOURCE_FOLDER}/ibek-support/_ansible
 
 COPY ibek-support/iocStats/ iocStats
-RUN iocStats/install.sh 3.2.0
+RUN ansible.sh iocStats
 
-################################################################################
-#  TODO - Add further support module installations here
-################################################################################
+COPY ibek-support/pvlogging/ pvlogging/
+RUN ansible.sh pvlogging
+
+COPY ibek-support/autosave/ autosave
+RUN ansible.sh autosave
+
 
 # get the ioc source and build it
 COPY ioc ${SOURCE_FOLDER}/ioc
-RUN cd ${IOC} && ./install.sh && make
+RUN ansible.sh ioc
 
 # install runtime proxy for non-native builds
 RUN bash ${IOC}/install_proxy.sh
