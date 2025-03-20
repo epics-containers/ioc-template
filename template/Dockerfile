@@ -1,6 +1,6 @@
 ARG IMAGE_EXT
 
-ARG BASE=7.0.9ec2
+ARG BASE=7.0.9ec3
 ARG REGISTRY=ghcr.io/epics-containers
 ARG RUNTIME=${REGISTRY}/epics-base${IMAGE_EXT}-runtime:${BASE}
 ARG DEVELOPER=${REGISTRY}/epics-base${IMAGE_EXT}-developer:${BASE}
@@ -32,13 +32,9 @@ RUN ansible.sh pvlogging
 COPY ibek-support/autosave/ autosave
 RUN ansible.sh autosave
 
-
 # get the ioc source and build it
 COPY ioc ${SOURCE_FOLDER}/ioc
 RUN ansible.sh ioc
-
-# install runtime proxy for non-native builds
-RUN bash ${IOC}/install_proxy.sh
 
 ##### runtime preparation stage ################################################
 FROM developer AS runtime_prep
