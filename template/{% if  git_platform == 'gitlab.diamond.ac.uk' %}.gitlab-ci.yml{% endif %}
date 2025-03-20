@@ -9,7 +9,7 @@ stages:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   image:
-    name: gcr.io/diamond-privreg/container-tools/kaniko-executor:v1.9.1-debug
+    name: gcr.io/kaniko-project/executor:debug
     entrypoint: [""]
   script:
     - echo 'Building image...'
