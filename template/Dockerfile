@@ -51,4 +51,5 @@ COPY --from=runtime_prep /assets /
 # install runtime system dependencies, collected from install.sh scripts
 RUN ibek support apt-install-runtime-packages
 
-CMD ["bash", "-c", "${IOC}/start.sh"]
+# launch the startup script with stdio-expose to allow console connections
+CMD ["bash", "-c", "stdio-expose ${IOC}/start.sh"]
