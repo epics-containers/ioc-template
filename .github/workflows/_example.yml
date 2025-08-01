@@ -28,7 +28,6 @@ jobs:
           git submodule update --init
           git checkout .gitmodules
           git add .
-          git commit -m'update to latest template'
 
       - name: Publish example
         # We pin to the SHA, not the tag, for security reasons.
