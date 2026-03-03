@@ -1,7 +1,10 @@
 #!/bin/bash
 
 # custom initialization goes here - runs outside of the dev container
-# just before the container is launched but after the container is created
+# just before the container is created
+
+# make sure ibek-support is in place or the container build will fail
+git submodule update --init --recursive
 
 echo "initializeCommand for devcontainerID ${1}"
 set -xe
