@@ -10,7 +10,7 @@ CONFIG_DIR=/epics/ioc/config
 THIS_SCRIPT=$(realpath ${0})
 override=${CONFIG_DIR}/startup.sh
 
-# 'startup.sh' may be overriden in the ioc/config directory
+# 'startup.sh' may be overridden in the ioc/config directory
 if [[ -f ${override} && ${override} != ${THIS_SCRIPT} ]]; then
     exec bash ${override}
 fi
