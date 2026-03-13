@@ -70,7 +70,9 @@ if [ -f ${RUNTIME_DIR}/ioc.subst ]; then
 fi
 
 # check hardware communication pre-requisites **********************************
-ibek ioc do-wait
+if [[ -f ${CONFIG_DIR}/ioc.yaml && -z "${IBEK_DO_WAIT_DISABLE}" ]]; then
+    ibek ioc do-wait
+fi
 
 # Launch the IOC ***************************************************************
 
