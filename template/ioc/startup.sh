@@ -6,7 +6,6 @@ CONFIG_DIR=${TOP}/config
 set -ex
 
 TMP_DIR=/tmp
-CONFIG_DIR=/epics/ioc/config
 THIS_SCRIPT=$(realpath ${0})
 override=${CONFIG_DIR}/startup.sh
 
