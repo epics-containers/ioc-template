@@ -63,10 +63,15 @@ if [[ -f ${CONFIG_DIR}/ioc.yaml ]] ; then
     ibek runtime generate-autosave
 fi
 
-# build expanded database using msi
+# build expanded database using msi ********************************************
 if [ -f ${RUNTIME_DIR}/ioc.subst ]; then
     includes=$(for i in ${SUPPORT}/*/db; do echo -n "-I $i "; done)
     bash -c "msi -o${RUNTIME_DIR}/ioc.db ${includes} -I${RUNTIME_DIR} -S${RUNTIME_DIR}/ioc.subst"
+fi
+
+# check hardware communication pre-requisites **********************************
+if [[ -f ${CONFIG_DIR}/ioc.yaml && -z "${IBEK_DO_WAIT_DISABLE}" ]]; then
+    ibek ioc do-wait
 fi
 
 # Launch the IOC ***************************************************************
