@@ -16,8 +16,8 @@ if [[ -f ${override} && ${override} != ${THIS_SCRIPT} ]]; then
 fi
 
 # Wait for the ibek doWait command to have completed successfully.
-# Such loop prevents the pod to report failed k8s startup probe events unecessarily
-# (i.e. by exiting and trying again) while the IOC is still in the process of starting up.
+# This loop prevents the pod from unnecessarily reporting failed k8s startup probe events
+# (for example, by exiting and trying again) while the IOC is still in the process of starting up.
 while [ ! -f ${TMP_DIR}/doWait_completed.txt ]; do
     sleep 1
 done
