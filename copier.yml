@@ -19,7 +19,6 @@ _tasks:
   - if ! git remote | grep origin; then  git remote add origin {{repo_uri}}; git submodule add https://github.com/epics-containers/ibek-support.git; fi
   # make sure ibek support submodule(s) is/are also up to date
   - git submodule update --init --recursive
-  - for i in "ibek-support*"; do (cd $i; git checkout main) ; done
 
 name:
   type: str
