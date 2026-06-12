@@ -1,4 +1,4 @@
 ibek>=3.3.4
 # to install direct from github during development in a branch
 # git+https://github.com/epics-containers/ibek.git@fix-extract-assets
-stdio-socket>=1.4.0
+stdio-socket @ git+https://github.com/hyperrealist/stdio-socket.git@hyperrealist:26-stdio-expose-hang-bugfix
