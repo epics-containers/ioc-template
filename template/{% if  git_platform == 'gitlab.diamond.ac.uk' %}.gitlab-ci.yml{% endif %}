@@ -1,5 +1,6 @@
 stages:
   - container
+  - release
 
 .build:
   tags:
@@ -44,3 +45,71 @@ build_linux_developer:
 #   variables:
 #     ARCH: rtems
 #     TARGET: developer
+
+# Publish the ibek schema for this generic IOC as a release asset, so that
+# ioc.yaml files can point their yaml-language-server $schema at a URL rather
+# than at /epics/ibek-defs/ioc.schema.json, which only resolves inside the
+# developer container. This is the gitlab equivalent of the 'release' job in
+# the github flavour of ioc-template.
+#
+# Gitlab releases cannot hold uploaded files directly, only links, so the
+# schema goes to the generic package registry first and the release then links
+# to it. direct_asset_path is what makes the version independent permalink
+#   <project>/-/releases/permalink/latest/downloads/ibek.ioc.schema.json
+# resolve to the uploaded file.
+publish_schema:
+  stage: release
+  tags:
+    - argus
+    - docker-image
+  rules:
+    - if: $CI_COMMIT_TAG
+  needs:
+    - build_linux_developer
+  variables:
+    # the schema comes from the container, so no need to clone the repo
+    GIT_STRATEGY: none
+    PACKAGE: ioc-schema
+  # run in the developer image that build_linux_developer just pushed
+  image:
+    name: $CI_REGISTRY_IMAGE/$CI_PROJECT_NAME-linux-developer:$CI_COMMIT_TAG
+    entrypoint: [""]
+  script:
+    - ibek ioc generate-schema --output ibek.ioc.schema.json
+    # versions.json is not present in every base image, so only ship it if it is
+    - if [ -f /epics/versions.json ]; then cp /epics/versions.json versions.json; fi
+    - |
+      # this whole block is one shell invocation, so a failed upload partway
+      # through would otherwise be masked by the last command succeeding
+      set -e
+      package_url="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE}/${CI_COMMIT_TAG}"
+      links=""
+      for file in ibek.ioc.schema.json versions.json; do
+          [ -f "${file}" ] || continue
+          echo "uploading ${file}"
+          curl --fail --silent --show-error \
+              --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+              --upload-file "${file}" "${package_url}/${file}"
+          [ -n "${links}" ] && links="${links},"
+          links="${links}$(printf '{"name":"%s","url":"%s/%s","direct_asset_path":"/%s","link_type":"package"}' \
+              "${file}" "${package_url}" "${file}" "${file}")"
+      done
+      printf '{"name":"%s","tag_name":"%s","description":"%s","assets":{"links":[%s]}}' \
+          "${CI_COMMIT_TAG}" "${CI_COMMIT_TAG}" \
+          "Generic IOC ${CI_PROJECT_NAME} ${CI_COMMIT_TAG}" "${links}" > release.json
+      echo "creating release ${CI_COMMIT_TAG}"
+      status=$(curl --silent --show-error --output response.json --write-out '%{http_code}' \
+          --request POST \
+          --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+          --header "Content-Type: application/json" \
+          --data @release.json \
+          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases")
+      case "${status}" in
+          20*) echo "release created" ;;
+          # a rerun of an already released tag - the packages above are
+          # overwritten, so the existing release still points at current files
+          409) echo "release ${CI_COMMIT_TAG} already exists, leaving it alone" ;;
+          *)   echo "release creation failed with HTTP ${status}"; cat response.json; exit 1 ;;
+      esac
+      echo "schema permalink:"
+      echo "  ${CI_PROJECT_URL}/-/releases/permalink/latest/downloads/ibek.ioc.schema.json"
