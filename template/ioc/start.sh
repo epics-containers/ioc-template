@@ -46,7 +46,7 @@ fi
 # check for an override start.sh script ****************************************
 
 if [ -f ${CONFIG_DIR}/start.sh ]; then
-    exec bash ${CONFIG_DIR}/start.sh "$@"
+    exec bash "${CONFIG_DIR}/start.sh" "$@"
 fi
 
 # copy hand coded files to runtime folder **************************************
@@ -102,5 +102,5 @@ fi
 if [[ "${TEST_MODE}" == "true" ]]; then
     echo "Test mode: all runtime assets generated successfully, skipping IOC binary launch"
 else
-    ${IOC}/bin/linux-x86_64/ioc ${RUNTIME_DIR}/st.cmd
+    "${IOC}/bin/linux-x86_64/ioc" "${RUNTIME_DIR}/st.cmd"
 fi
