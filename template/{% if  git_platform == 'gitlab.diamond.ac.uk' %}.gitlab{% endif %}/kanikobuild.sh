@@ -22,7 +22,7 @@ fi
 add_env="OPENSSL_FORCE_FIPS_MODE=0"
 sed -i "/^FROM.*AS developer/a ENV $add_env" Dockerfile
 
-CMDROOT="/kaniko/executor --context $CI_PROJECT_DIR --build-arg EPICS_TARGET_ARCH=${ARCH}"
+CMDROOT="/kaniko/executor --context $CI_PROJECT_DIR --build-arg EPICS_TARGET_ARCH=${ARCH} --build-arg IOC_VERSION=${CI_VERSION_TAG}"
 CMD=$CMDROOT"  --target ${TARGET}"
 CMD=$CMD" --destination $CI_REGISTRY_IMAGE/$CI_PROJECT_NAME-${ARCH}-${TARGET}:$CI_VERSION_TAG"
 
