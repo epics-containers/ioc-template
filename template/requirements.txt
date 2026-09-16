@@ -1,6 +1,7 @@
 # pin versions of pvi or ibek if needed
 pvi
-ibek
+# ioc/start.sh needs 'ibek runtime place-files', first released in 4.6.1
+ibek>=4.7.0
 # to install direct from github during development in a branch
 # git+https://github.com/epics-containers/ibek.git@fix-extract-assets
 stdio-socket>=1.4.0
