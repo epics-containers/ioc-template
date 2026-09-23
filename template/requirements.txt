@@ -1,7 +1,13 @@
-# pin versions of pvi or ibek if needed
-pvi
+# Upper bounds keep generic IOC image builds reproducible: the Dockerfile runs
+# 'uv pip install --upgrade', so without a ceiling every rebuild silently picks
+# up whatever ibek / pvi is latest on PyPI. Bump these deliberately.
+#
+# pvi is listed explicitly (above ibek) so it can be bumped without an ibek
+# release. 0.14.1 fixes sub-screen button links broken in 0.14.0
+# (https://github.com/epics-containers/pvi/pull/203)
+pvi>=0.14.1,<0.15
 # ioc/start.sh needs 'ibek runtime place-files', first released in 4.6.1
-ibek>=4.7.0
+ibek>=4.7.0,<5
 # to install direct from github during development in a branch
 # git+https://github.com/epics-containers/ibek.git@fix-extract-assets
 stdio-socket>=1.4.0
