@@ -22,20 +22,31 @@ jobs:
         run: |
           sed -i 's|_src_path: .|_src_path: gh:epics-containers/ioc-template|' example/.copier-answers.yml
 
-      - name: refresh the submodule
-        run: |
-          cd example;
-          git submodule update --init
-          git checkout .gitmodules
-          git add .
-
       - name: Publish example
-        # We pin to the SHA, not the tag, for security reasons.
-        # https://docs.github.com/en/actions/learn-github-actions/security-hardening-for-github-actions#using-third-party-actions
-        uses: peaceiris/actions-gh-pages@4f9cc6602d3f66b9c108549d475ec49e8ef4d45e # v4.0.0
-        with:
-          deploy_key: ${{ secrets.EXAMPLE_DEPLOY_KEY }}
-          publish_dir: example
-          external_repository: epics-containers/ioc-template-example
-          publish_branch: main
-          exclude_assets: "" # default would exclude .github
+        # Commit from the git repo that copier created (its tasks run git init
+        # and git submodule add) rather than copying files into a checkout of
+        # the example repo. Copying turns the ibek-support submodule into a
+        # plain folder, see epics-containers/ioc-template-example#1.
+        env:
+          EXAMPLE_DEPLOY_KEY: ${{ secrets.EXAMPLE_DEPLOY_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "${EXAMPLE_DEPLOY_KEY}" > ~/.ssh/example_deploy_key
+          chmod 600 ~/.ssh/example_deploy_key
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/example_deploy_key -o IdentitiesOnly=yes"
+
+          cd example
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # origin was set by the copier tasks from repo_uri in example-answers.yml
+          git fetch origin main
+          # keep the example's history: move HEAD to its current main without
+          # touching the index, then stage the regenerated tree on top of it
+          git reset --soft FETCH_HEAD
+          git add -A
+          if git diff --cached --quiet; then
+            echo "example is already up to date"
+            exit 0
+          fi
+          git commit -m "deploy: ${GITHUB_REPOSITORY}@${GITHUB_SHA}"
+          git push origin HEAD:main
