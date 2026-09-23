@@ -24,11 +24,19 @@ set -xe
 
 # parse arguments *************************************************************
 
-# --test: run the full startup sequence (generate ibek assets, db) but skip
-# hardware connections and the IOC binary launch. Used by CI to validate
-# configs without real hardware.
+# --test: run the full startup sequence (generate ibek assets, db, pvi) but
+# skip hardware connections (e.g. arv-tool GenICam discovery in ioc-adaravis
+# or do-wait step for ioc-pmac) and the IOC binary launch.
+# Used by CI to validate configs without real hardware.
 TEST_MODE=false
-[[ "${1:-}" == "--test" ]] && TEST_MODE=true
+case "${1:-}" in
+    "") ;;
+    --test) TEST_MODE=true ;;
+    *)
+        echo "Unknown argument: $1" >&2
+        exit 1
+        ;;
+esac
 
 # environment setup ************************************************************
 
