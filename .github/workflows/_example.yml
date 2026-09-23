@@ -33,6 +33,8 @@ jobs:
           mkdir -p ~/.ssh
           echo "${EXAMPLE_DEPLOY_KEY}" > ~/.ssh/example_deploy_key
           chmod 600 ~/.ssh/example_deploy_key
+          # don't rely on the runner image having github.com's host keys
+          ssh-keyscan -t rsa,ecdsa,ed25519 github.com >> ~/.ssh/known_hosts
           export GIT_SSH_COMMAND="ssh -i ~/.ssh/example_deploy_key -o IdentitiesOnly=yes"
 
           cd example
