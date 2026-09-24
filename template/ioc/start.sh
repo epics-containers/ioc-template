@@ -1,9 +1,22 @@
 #!/bin/bash
 
-# wrap the console *************************************************************
+# parse arguments *************************************************************
 
-if [[ -n ${KUBERNETES_PORT} && -z ${STDIO_EXPOSED} ]]; then
-    STDIO_EXPOSED=YES exec stdio-socket ${IOC}/start.sh
+# --test: generate all runtime assets, but skip hardware access and the IOC
+# launch. Used by CI to validate configs. All arguments, including --test,
+# are also forwarded unchanged to a config override start.sh (see below) if
+# one exists, for it to interpret itself.
+TEST_MODE=false
+[[ "$1" == "--test" ]] && TEST_MODE=true
+
+# wrap the console *************************************************************
+# test mode is not wrapped: stdio-socket takes a single command with no
+# arguments and always exits 0, so a wrapped --test could never fail.
+
+# stdio-socket runs the wrapped command as one string via `sh -c`, so the
+# arguments are passed as "$*": arguments containing spaces are not supported.
+if [[ -n ${KUBERNETES_PORT} && -z ${STDIO_EXPOSED} && "${TEST_MODE}" != "true" ]]; then
+    STDIO_EXPOSED=YES exec stdio-socket "${IOC}/start.sh $*"
     exit 0
 fi
 
@@ -36,9 +49,11 @@ if [[ -f ${SUPPORT}/configure/RELEASE.shell ]]; then
 fi
 
 # check for an override start.sh script ****************************************
+# this script's arguments are passed on unchanged, for the override to
+# interpret itself.
 
 if [ -f ${CONFIG_DIR}/start.sh ]; then
-    exec bash ${CONFIG_DIR}/start.sh
+    exec bash "${CONFIG_DIR}/start.sh" "$@"
 fi
 
 # copy hand coded files to runtime folder **************************************
@@ -85,11 +100,14 @@ fi
 # set IBEK_DO_WAIT_DISABLE=true to skip this step (e.g. to force IOC startup
 # without waiting for hardware, or to bypass it at the shell level in pipelines
 # where ibek is unavailable)
-if [[ -f ${CONFIG_DIR}/ioc.yaml && "${IBEK_DO_WAIT_DISABLE}" != "true" ]]; then
+if [[ -f ${CONFIG_DIR}/ioc.yaml && "${IBEK_DO_WAIT_DISABLE}" != "true" && "${TEST_MODE}" != "true" ]]; then
     ibek ioc do-wait
 fi
 
 # Launch the IOC ***************************************************************
 
-${IOC}/bin/linux-x86_64/ioc ${RUNTIME_DIR}/st.cmd
-
+if [[ "${TEST_MODE}" == "true" ]]; then
+    echo "Test mode: all runtime assets generated successfully, skipping IOC binary launch"
+else
+    "${IOC}/bin/linux-x86_64/ioc" "${RUNTIME_DIR}/st.cmd"
+fi
