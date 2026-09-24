@@ -48,6 +48,11 @@ if [[ -f ${SUPPORT}/configure/RELEASE.shell ]]; then
     source ${SUPPORT}/configure/RELEASE.shell
 fi
 
+# report what this image was built from (support module / python versions)
+if [[ -f /epics/versions.json ]]; then
+    cat /epics/versions.json
+fi
+
 # check for an override start.sh script ****************************************
 # this script's arguments are passed on unchanged, for the override to
 # interpret itself.

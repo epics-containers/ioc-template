@@ -160,6 +160,7 @@ jobs:
           target: runtime
           build-args: |
             IMAGE_EXT=${{ matrix.extension }}
+            IOC_VERSION=${{ github.ref_name }}
           tags: ${{ steps.meta-runtime.outputs.tags }}
           labels: ${{ steps.meta-runtime.outputs.labels }}
           push: true
