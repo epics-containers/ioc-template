@@ -83,8 +83,10 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}
         run: |
+          # PEP440 (2025.12.1b1) and semver (2025.12.1-beta.1) pre-release styles
+          # are both in use across generic IOCs, so accept either.
           case "${TAG}" in
-              *a[0-9]*|*b[0-9]*|*rc[0-9]*)
+              *a[0-9]*|*b[0-9]*|*rc[0-9]*|*alpha*|*beta*|*rc.[0-9]*)
                   echo "::notice::pre-release tag ${TAG}, skipping ibek-support branch check"
                   exit 0
                   ;;
@@ -111,7 +113,7 @@ jobs:
               else
                   echo "::error::${sub} ${sha} is not on ${branch}. Merge it to"\
                       "${branch}, update the submodule and re-tag, or publish"\
-                      "this as a pre-release tag (e.g. ${TAG}b1)."
+                      "this as a pre-release tag (e.g. ${TAG}-beta.1)."
                   status=1
               fi
           done
