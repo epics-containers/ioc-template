@@ -63,5 +63,12 @@ COPY --from=runtime_prep /assets /
 # install runtime system dependencies, collected from install.sh scripts
 RUN ibek support apt-install-runtime-packages
 
+# avoid the "I have no name!" shell prompt when a terminal is opened into this
+# container as a uid with no /etc/passwd entry (kubectl exec, the ArgoCD
+# Terminal tab): \u looks the username up and falls back to that literal
+# string when the lookup fails. A prompt without \u needs no such lookup.
+# Appended last so it wins over whatever the base image already set here.
+RUN printf '%s\n' 'PS1="\w \$ "' >> /etc/bash.bashrc
+
 # launch the startup script with stdio-expose to allow console connections
 CMD ["bash", "-c", "${IOC}/start.sh"]
