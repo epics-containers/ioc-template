@@ -19,7 +19,10 @@ RUN ln -s ${SOURCE_FOLDER}/ioc ${IOC}
 
 # get the current versions of pvi and ibek
 COPY requirements.txt requirements.txt
-RUN uv pip install --upgrade -r requirements.txt
+# ibek-support pins its own supported ibek range in its root requirements.txt;
+# install it alongside this repo's pins so a build honours both ceilings
+COPY ibek-support/requirements.txt ibek-support-requirements.txt
+RUN uv pip install --upgrade -r requirements.txt -r ibek-support-requirements.txt
 
 WORKDIR ${SOURCE_FOLDER}/ibek-support
 
