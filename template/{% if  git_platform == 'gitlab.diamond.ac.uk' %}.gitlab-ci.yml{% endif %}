@@ -10,12 +10,12 @@ stages:
   variables:
     GIT_SUBMODULE_STRATEGY: recursive
   image:
-    name: gcr.io/kaniko-project/executor:debug
+    name: quay.io/buildah/stable
     entrypoint: [""]
   script:
     - echo 'Building image...'
     - env | grep "CI_"
-    - /bin/sh .gitlab/kanikobuild.sh
+    - /bin/bash .gitlab/buildahbuild.sh
     - echo "Done!"
   # uncomment to only publish on tags
   # only:
