@@ -11,9 +11,6 @@ ARG DEVELOPER=${REGISTRY}/epics-base${IMAGE_EXT}-developer:7.0.9ec5
 ##### build stage ##############################################################
 FROM  ${DEVELOPER} AS developer
 
-# initiate ioc image verson variable for manifest
-ARG IOC_VERSION=unknown
-
 # The devcontainer mounts the project root to /epics/generic-source
 # Using the same location here makes devcontainer/runtime differences transparent.
 ENV SOURCE_FOLDER=/epics/generic-source
@@ -43,6 +40,9 @@ COPY ioc ${SOURCE_FOLDER}/ioc
 RUN ansible.sh ioc
 
 # generate a manifest of installed EPICS modules and python packages
+# IOC_VERSION is declared here, not earlier: every RUN after an ARG sees it,
+# so a new value (each branch or tag) would rebuild all the steps above
+ARG IOC_VERSION=unknown
 COPY scripts/generate_manifest.py /tmp/generate_manifest.py
 RUN python3 /tmp/generate_manifest.py "${IOC_VERSION}"
 
