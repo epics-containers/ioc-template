@@ -1,6 +1,7 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
 _commit: 3.5.0
 _src_path: ioc-template
+arm64: true
 description: A test instantiation of the ioc-template copier template
 git_platform: github.com
 github_org: epics-containers
