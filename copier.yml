@@ -65,3 +65,11 @@ repo_uri:
     {%- else -%}
     git@{{git_platform}}:{{github_org}}/{{name}}.git
     {%- endif %}
+
+arm64:
+  type: bool
+  help: |
+    Build and publish an arm64 image as well as amd64? Answer no if the IOC
+    depends on something that only exists for x86, such as a prebuilt vendor
+    library. The IOC is then published amd64-only.
+  default: true
