@@ -66,9 +66,10 @@ repo_uri:
     git@{{git_platform}}:{{github_org}}/{{name}}.git
     {%- endif %}
 
-rtems:
+arm64:
   type: bool
   help: |
-    Does this IOC require RTEMS support? At present RTEMS cross-compilation
-    is restricted to PowerPC beatnik boards (those used at DLS).
-  default: false
+    Build and publish an arm64 image as well as amd64? Answer no if the IOC
+    depends on something that only exists for x86, such as a prebuilt vendor
+    library. The IOC is then published amd64-only.
+  default: true
