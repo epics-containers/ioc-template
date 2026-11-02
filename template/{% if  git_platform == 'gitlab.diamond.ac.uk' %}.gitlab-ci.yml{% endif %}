@@ -34,18 +34,6 @@ build_linux_developer:
     ARCH: linux
     TARGET: developer
 
-# build_rtems_runtime:
-#   extends: .build
-#   variables:
-#     ARCH: rtems
-#     TARGET: runtime
-
-# build_rtems_developer:
-#   extends: .build
-#   variables:
-#     ARCH: rtems
-#     TARGET: developer
-
 # Publish the ibek schema for this generic IOC as a release asset, so that
 # ioc.yaml files can point their yaml-language-server $schema at a URL rather
 # than at /epics/ibek-defs/ioc.schema.json, which only resolves inside the

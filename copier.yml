@@ -65,10 +65,3 @@ repo_uri:
     {%- else -%}
     git@{{git_platform}}:{{github_org}}/{{name}}.git
     {%- endif %}
-
-rtems:
-  type: bool
-  help: |
-    Does this IOC require RTEMS support? At present RTEMS cross-compilation
-    is restricted to PowerPC beatnik boards (those used at DLS).
-  default: false
