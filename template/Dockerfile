@@ -1,6 +1,6 @@
 ARG REGISTRY=ghcr.io/epics-containers
-ARG RUNTIME=${REGISTRY}/epics-base-runtime:7.0.11ec1
-ARG DEVELOPER=${REGISTRY}/epics-base-developer:7.0.11ec1
+ARG RUNTIME=${REGISTRY}/epics-base-runtime:7.0.11ec2
+ARG DEVELOPER=${REGISTRY}/epics-base-developer:7.0.11ec2
 
 ##### build stage ##############################################################
 FROM  ${DEVELOPER} AS developer
