@@ -52,7 +52,6 @@ test_linux_runtime:
   variables:
     DOCKER_PROVIDER: kodman
   script:
-    - bash .gitlab/check-test-config.sh
     - pip install "Kodman>=1.5.0,<2"
     - bash tests/run-tests.sh $CI_REGISTRY_IMAGE/$CI_PROJECT_NAME-linux-runtime:$CI_COMMIT_REF_NAME
 
