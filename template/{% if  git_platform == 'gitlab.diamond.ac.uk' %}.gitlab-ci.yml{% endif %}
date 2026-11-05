@@ -1,5 +1,6 @@
 stages:
   - container
+  - test
   - release
 
 .build:
@@ -34,6 +35,26 @@ build_linux_developer:
     ARCH: linux
     TARGET: developer
 
+# Start the runtime image that build_linux_runtime just pushed with the generic
+# test config and check its output. This is the gitlab equivalent of the
+# 'Test image' step in the github flavour of ioc-template. The image runs in its
+# own pod through kodman, so this job uses the runners that may create pods.
+test_linux_runtime:
+  stage: test
+  tags:
+    - epics-containers
+    - argus
+  needs:
+    - build_linux_runtime
+  image: python:3.13
+  # a pod that never exits would otherwise hold the job until the project's limit
+  timeout: 30 minutes
+  variables:
+    DOCKER_PROVIDER: kodman
+  script:
+    - pip install "Kodman>=1.5.0,<2"
+    - bash tests/run-tests.sh $CI_REGISTRY_IMAGE/$CI_PROJECT_NAME-linux-runtime:$CI_COMMIT_REF_NAME
+
 # Publish the ibek schema for this generic IOC as a release asset, so that
 # ioc.yaml files can point their yaml-language-server $schema at a URL rather
 # than at /epics/ibek-defs/ioc.schema.json, which only resolves inside the
@@ -54,6 +75,7 @@ publish_schema:
     - if: $CI_COMMIT_TAG
   needs:
     - build_linux_developer
+    - test_linux_runtime
   variables:
     # the schema comes from the container, so no need to clone the repo
     GIT_STRATEGY: none
