@@ -1,11 +1,10 @@
 {#- The developer image that CI publishes from the main branch of this
-    repository. The github workflow names it from the repository owner and name
-    and tags it latest. The gitlab CI names it from the project path in the
-    registry on port 5050 and tags it with the branch name. Registries need
-    lower case. -#}
+    repository as latest. The github workflow names it from the repository
+    owner and name, the gitlab CI from the project path in the registry on
+    port 5050. Registries need lower case. -#}
 {%- if git_platform == 'gitlab.diamond.ac.uk' -%}
 {%- set project = repo_uri | regex_replace('^([a-z+]+://[^/]+/|[^/]*:)', '') | regex_replace('(\\.git)?/*$', '') | lower -%}
-{%- set image = git_platform ~ ':5050/' ~ project ~ '/' ~ (project | basename) ~ '-linux-developer:main' -%}
+{%- set image = git_platform ~ ':5050/' ~ project ~ '/' ~ (project | basename) ~ '-linux-developer:latest' -%}
 {%- else -%}
 {%- set image = 'ghcr.io/' ~ (github_org | lower) ~ '/' ~ name ~ '-developer:latest' -%}
 {%- endif -%}
