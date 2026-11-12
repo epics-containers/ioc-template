@@ -187,9 +187,12 @@ jobs:
 
   cleanup:
     # Each push to main moves the latest tag and leaves the developer images it
-    # pointed at untagged. This lists the untagged ones older than a day, which
-    # no build in progress can still be using. It is a dry run that deletes
-    # nothing: read its log, then set dry-run to false to delete them.
+    # pointed at untagged. Untagged runtime images are left by a tag that is
+    # pushed again, by a run that fails between the push by digest and the
+    # merge job, and by versions deleted by hand. This lists the untagged
+    # images of both packages older than a day, which no build in progress can
+    # still be using. It is a dry run that deletes nothing: read its log, then
+    # set dry-run to false to delete them.
     needs: [merge]
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
@@ -200,16 +203,16 @@ jobs:
       packages: write
 
     steps:
-      - name: Package name
+      - name: Package names
         id: package
         run: |
           repo=${NAME##*/}
-          echo "name=${repo,,}-developer" >> $GITHUB_OUTPUT
+          echo "names=${repo,,}-developer,${repo,,}-runtime" >> $GITHUB_OUTPUT
 
-      - name: Clean up untagged developer images
+      - name: Clean up untagged images
         uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         with:
-          package: ${{ steps.package.outputs.name }}
+          package: ${{ steps.package.outputs.names }}
           delete-untagged: true
           older-than: 1 day
           dry-run: true
