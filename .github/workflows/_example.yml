@@ -40,7 +40,7 @@ jobs:
           cd example
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # origin was set by the copier tasks from repo_uri in example-answers.yml
+          # origin was set by the copier tasks from the answers in example-answers.yml
           git fetch origin main
           # keep the example's history: move HEAD to its current main without
           # touching the index, then stage the regenerated tree on top of it
