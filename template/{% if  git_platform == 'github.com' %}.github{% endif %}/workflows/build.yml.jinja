@@ -196,6 +196,8 @@ jobs:
     needs: [merge]
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
+    # the action fails on a package that does not exist yet, such as runtime before the first tag
+    continue-on-error: true
     # the action must not run twice at once against the same package
     concurrency:
       group: cleanup-images

@@ -22,7 +22,7 @@ copier update --trust .
 This repository includes a developer container configuration for Visual Studio Code. This allows you to run the Generic IOC locally and debug it. See https://epics-containers.github.io/main/tutorials/dev_container.html.
 
 {% if git_platform == 'gitlab.diamond.ac.uk' -%}
-The developer container runs the `{{name}}-linux-developer:main` image that CI publishes from the main branch, named in `.devcontainer/devcontainer.json`. The host must be logged in to the GitLab container registry (`docker login {{git_platform}}:5050` or `podman login {{git_platform}}:5050`) to pull it, otherwise each start falls back to a local build.
+The developer container runs the `{{name}}-linux-developer:main` image that CI publishes from the main branch, named in `.devcontainer/devcontainer.json`. The host must be logged in to the GitLab container registry (`docker login {{git_platform}}:5050` or `podman login {{git_platform}}:5050`) to pull it. Without a login the first start builds the image locally and later starts reuse that local image, which is then not refreshed.
 {%- else -%}
 The developer container runs the `{{name}}-developer:latest` image that CI publishes from the main branch, named in `.devcontainer/devcontainer.json`.
 {%- endif %} Each time the container starts:
@@ -32,11 +32,13 @@ The developer container runs the `{{name}}-developer:latest` image that CI publi
 
 An existing container keeps the image it was created from: use "Dev Containers: Rebuild Container" to move it to the image that was pulled.
 
-To build the image from this folder instead of pulling it, for example to try out a change to the `Dockerfile`, set `EC_LOCAL_BUILD=1` in the environment that VS Code is started from:
+To build the image from this folder instead of pulling it, for example to try out a change to the `Dockerfile`, set `EC_LOCAL_BUILD=1` in the environment of the VS Code instance; an instance that is already running does not see it:
 
 ```bash
 EC_LOCAL_BUILD=1 code .
 ```
+
+Each start with `EC_LOCAL_BUILD` set runs `./build`, which removes the IOC build products and the `ioc/config` link. An existing container keeps its image until "Dev Containers: Rebuild Container".
 
 ## Channel Access
 
