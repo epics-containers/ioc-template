@@ -1,16 +1,18 @@
-{#- The developer image that CI publishes for this repository. The github
-    workflow names it from the repository owner and name, the gitlab CI from
-    the project path in the registry on port 5050. Registries need lower case. -#}
+{#- The developer image that CI publishes from the main branch of this
+    repository. The github workflow names it from the repository owner and name
+    and tags it latest. The gitlab CI names it from the project path in the
+    registry on port 5050 and tags it with the branch name. Registries need
+    lower case. -#}
 {%- if git_platform == 'gitlab.diamond.ac.uk' -%}
-{%- set project = repo_uri | regex_replace('^([a-z+]+://[^/]+/|[^/]*:)', '') | regex_replace('\\.git$', '') | lower -%}
-{%- set image = git_platform ~ ':5050/' ~ project ~ '/' ~ (project | basename) ~ '-linux-developer' -%}
+{%- set project = repo_uri | regex_replace('^([a-z+]+://[^/]+/|[^/]*:)', '') | regex_replace('(\\.git)?/*$', '') | lower -%}
+{%- set image = git_platform ~ ':5050/' ~ project ~ '/' ~ (project | basename) ~ '-linux-developer:main' -%}
 {%- else -%}
-{%- set image = 'ghcr.io/' ~ (github_org | lower) ~ '/' ~ name ~ '-developer' -%}
+{%- set image = 'ghcr.io/' ~ (github_org | lower) ~ '/' ~ name ~ '-developer:latest' -%}
 {%- endif -%}
 // For format details, see https://containers.dev/implementors/json_reference/
 {
     "name": "epics-containers IOC devcontainer",
-    "image": "{{ image }}:latest",
+    "image": "{{ image }}",
     "containerEnv": {
         // provides a name for epics-containers to use in bash prompt etc.
         "EC_PROJECT": "${localWorkspaceFolderBasename}",
