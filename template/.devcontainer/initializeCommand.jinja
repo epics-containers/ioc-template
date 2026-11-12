@@ -19,7 +19,7 @@ mkdir -p ./opi/auto-generated
 # Pull it so that it is up to date; when it cannot be pulled use the local image
 # of that name, or build one if there is none. Set EC_LOCAL_BUILD=1 to skip the
 # pull and build the image from this folder.
-image={{ developer_image }}
+image="{{ developer_image }}"
 
 # prefer docker but use podman if USE_PODMAN is set, as ./build does
 if docker version &> /dev/null && [[ -z $USE_PODMAN ]] ; then
