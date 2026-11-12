@@ -40,6 +40,12 @@ ARG IOC_VERSION=unknown
 COPY scripts/generate_manifest.py /tmp/generate_manifest.py
 RUN python3 /tmp/generate_manifest.py "${IOC_VERSION}"
 
+# record the source this image is built from, for 'ibek dev sync' to compare
+# with the project folder that a devcontainer mounts over ${SOURCE_FOLDER}.
+# This comes last so that an edit to the Dockerfile rebuilds nothing above
+COPY Dockerfile requirements.txt ${SOURCE_FOLDER}/
+RUN ibek dev stamp
+
 ##### runtime preparation stage ################################################
 FROM developer AS runtime_prep
 
