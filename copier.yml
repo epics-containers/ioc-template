@@ -39,7 +39,7 @@ description:
 git_platform:
   type: str
   help: Git platform hosting the repository.
-  placeholder: For missing platform override repo_uri, or add your own in a PR.
+  placeholder: For a missing platform, add your own in a PR.
   choices:
     - github.com
     - gitlab.diamond.ac.uk
@@ -56,14 +56,37 @@ github_org:
     it may contain hyphens
     {% endif -%}
 
-repo_uri:
+# repo_path, repo_uri and developer_image are computed from the answers above:
+# 'when: false' means they are never asked and never stored in the answers file
+
+# The path of the repository on its git platform.
+repo_path:
   type: str
-  help: Remote URI of the repository.
+  when: false
   default: >-
     {% if git_platform == 'gitlab.diamond.ac.uk' -%}
-    git@{{git_platform}}:controls/containers/iocs/{{name}}.git
+    controls/containers/iocs/{{name}}
     {%- else -%}
-    git@{{git_platform}}:{{github_org}}/{{name}}.git
+    {{github_org}}/{{name}}
+    {%- endif %}
+
+# Remote URI of the repository.
+repo_uri:
+  type: str
+  when: false
+  default: git@{{git_platform}}:{{repo_path}}.git
+
+# The developer image that CI publishes as latest with each full release. The github
+# workflow names it from the repository owner and name, the gitlab CI from the
+# project path in the registry on port 5050. Registries need lower case.
+developer_image:
+  type: str
+  when: false
+  default: >-
+    {% if git_platform == 'gitlab.diamond.ac.uk' -%}
+    {{git_platform}}:5050/{{repo_path | lower}}/{{name}}-linux-developer:latest
+    {%- else -%}
+    ghcr.io/{{repo_path | lower}}-developer:latest
     {%- endif %}
 
 arm64:
