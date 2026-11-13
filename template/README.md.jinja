@@ -42,7 +42,7 @@ To run the image built from your own tree instead, for example after changing th
 touch .devcontainer/local-build
 ```
 
-While that file exists each start builds the image with `./build`, which is quick when the layers are cached, instead of pulling it. `./build` removes the IOC build products and the `ioc/config` link on each of those starts, also from a container that is reopened. Delete the file to go back to the published image. Git ignores the file.
+While that file exists each start builds the image with `./build`, which is quick when the layers are cached, instead of pulling it. The build leaves the project folder as it is: `.dockerignore` keeps the IOC build products and the `ioc/config` link out of the image. Delete the file to go back to the published image. Git ignores the file.
 
 ## Channel Access
 
