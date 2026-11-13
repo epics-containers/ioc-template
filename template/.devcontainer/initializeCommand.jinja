@@ -38,7 +38,7 @@ else
 fi
 
 # make sure new clones get their submodule ibek-support, as ./build does
-if [ ! -d ibek-support/_global ] ; then git submodule update --init ; fi
+if [ ! -e ibek-support/.git ] ; then git submodule update --init ; fi
 
 if [[ -e .devcontainer/local-build ]] ; then
     { say 33 ".devcontainer/local-build exists, building ${image}. Delete that file to pull the image" ; } 2> /dev/null
