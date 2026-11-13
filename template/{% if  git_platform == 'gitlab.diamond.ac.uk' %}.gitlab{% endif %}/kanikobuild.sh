@@ -25,9 +25,13 @@ sed -i "/^FROM.*AS developer/a ENV $add_env" Dockerfile
 CMDROOT="/kaniko/executor --context $CI_PROJECT_DIR --build-arg EPICS_TARGET_ARCH=${ARCH} --build-arg IOC_VERSION=${CI_VERSION_TAG}"
 CMD=$CMDROOT"  --target ${TARGET}"
 CMD=$CMD" --destination $CI_REGISTRY_IMAGE/$CI_PROJECT_NAME-${ARCH}-${TARGET}:$CI_VERSION_TAG"
-# the default branch also tags its developer image latest: the devcontainer opens from it
-if [ -z "${CI_COMMIT_TAG}" ] && [ "${CI_COMMIT_REF_NAME}" = "${CI_DEFAULT_BRANCH}" ] && [ "${TARGET}" = "developer" ]; then
-  CMD=$CMD" --destination $CI_REGISTRY_IMAGE/$CI_PROJECT_NAME-${ARCH}-${TARGET}:latest"
+# a full release also tags its developer image latest: the devcontainer opens from it.
+# Pre-release tags (the patterns of the github flavour of ioc-template) do not
+if [ -n "${CI_COMMIT_TAG}" ] && [ "${TARGET}" = "developer" ]; then
+  case "${CI_COMMIT_TAG}" in
+    *a[0-9]*|*b[0-9]*|*rc[0-9]*|*alpha*|*beta*|*rc.[0-9]*) ;;
+    *) CMD=$CMD" --destination $CI_REGISTRY_IMAGE/$CI_PROJECT_NAME-${ARCH}-${TARGET}:latest" ;;
+  esac
 fi
 
 (

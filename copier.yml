@@ -76,7 +76,7 @@ repo_uri:
   when: false
   default: git@{{git_platform}}:{{repo_path}}.git
 
-# The developer image that CI publishes from the main branch. The github
+# The developer image that CI publishes as latest with each full release. The github
 # workflow names it from the repository owner and name, the gitlab CI from the
 # project path in the registry on port 5050. Registries need lower case.
 developer_image:
