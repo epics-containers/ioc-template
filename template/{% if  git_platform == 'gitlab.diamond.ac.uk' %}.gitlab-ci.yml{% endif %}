@@ -65,7 +65,9 @@ test_linux_runtime:
 # schema goes to the generic package registry first and the release then links
 # to it. direct_asset_path is what makes the version independent permalink
 #   <project>/-/releases/permalink/latest/downloads/ibek.ioc.schema.json
-# resolve to the uploaded file.
+# resolve to the uploaded file. The job creates the release if it does not
+# exist and then links each file to it, so a release made in the gitlab web
+# form, or a rerun of the job, still ends up with the links.
 publish_schema:
   stage: release
   tags:
@@ -93,33 +95,44 @@ publish_schema:
       # through would otherwise be masked by the last command succeeding
       set -e
       package_url="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${PACKAGE}/${CI_COMMIT_TAG}"
-      links=""
+      releases_url="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases"
+      uploaded=""
       for file in ibek.ioc.schema.json versions.json; do
           [ -f "${file}" ] || continue
           echo "uploading ${file}"
           curl --fail --silent --show-error \
               --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
               --upload-file "${file}" "${package_url}/${file}"
-          [ -n "${links}" ] && links="${links},"
-          links="${links}$(printf '{"name":"%s","url":"%s/%s","direct_asset_path":"/%s","link_type":"package"}' \
-              "${file}" "${package_url}" "${file}" "${file}")"
+          echo
+          uploaded="${uploaded} ${file}"
       done
-      printf '{"name":"%s","tag_name":"%s","description":"%s","assets":{"links":[%s]}}' \
-          "${CI_COMMIT_TAG}" "${CI_COMMIT_TAG}" \
-          "Generic IOC ${CI_PROJECT_NAME} ${CI_COMMIT_TAG}" "${links}" > release.json
       echo "creating release ${CI_COMMIT_TAG}"
       status=$(curl --silent --show-error --output response.json --write-out '%{http_code}' \
           --request POST \
           --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
-          --header "Content-Type: application/json" \
-          --data @release.json \
-          "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/releases")
+          --data-urlencode "tag_name=${CI_COMMIT_TAG}" \
+          --data-urlencode "name=${CI_COMMIT_TAG}" \
+          --data-urlencode "description=Generic IOC ${CI_PROJECT_NAME} ${CI_COMMIT_TAG}" \
+          "${releases_url}")
       case "${status}" in
           20*) echo "release created" ;;
-          # a rerun of an already released tag - the packages above are
-          # overwritten, so the existing release still points at current files
-          409) echo "release ${CI_COMMIT_TAG} already exists, leaving it alone" ;;
-          *)   echo "release creation failed with HTTP ${status}"; cat response.json; exit 1 ;;
+          409) echo "release already exists" ;;
+          *)   echo "release creation failed with HTTP ${status}"; cat response.json; echo; exit 1 ;;
       esac
+      for file in ${uploaded}; do
+          status=$(curl --silent --show-error --output response.json --write-out '%{http_code}' \
+              --request POST \
+              --header "JOB-TOKEN: ${CI_JOB_TOKEN}" \
+              --data-urlencode "name=${file}" \
+              --data-urlencode "url=${package_url}/${file}" \
+              --data-urlencode "direct_asset_path=/${file}" \
+              --data-urlencode "link_type=package" \
+              "${releases_url}/${CI_COMMIT_TAG}/assets/links")
+          case "${status}" in
+              20*) echo "linked ${file}" ;;
+              400) echo "${file} already linked (a link with that name, url or path exists)" ;;
+              *)   echo "linking ${file} failed with HTTP ${status}"; cat response.json; echo; exit 1 ;;
+          esac
+      done
       echo "schema permalink:"
       echo "  ${CI_PROJECT_URL}/-/releases/permalink/latest/downloads/ibek.ioc.schema.json"
